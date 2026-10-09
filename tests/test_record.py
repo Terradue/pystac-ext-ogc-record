@@ -231,3 +231,216 @@ def test_foreign_member_lists_are_live() -> None:
     document = record.to_dict()
     assert document["conformsTo"] == ["https://example.org/profile"]
     assert document["linkTemplates"] == [{"uriTemplate": "https://example.org/{id}"}]
+
+
+@pytest.mark.parametrize("field", ["created", "updated"])
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        "2026-10-09T02:30:45.123456+02:00",
+        "2026-10-09T00:30:45Z",
+        datetime(2026, 10, 9, 0, 30, 45, 123456, tzinfo=timezone.utc),
+        datetime(2026, 10, 9, 0, 30, 45),
+    ],
+)
+def test_metadata_timestamp_normalization(field: str, timestamp: str | datetime) -> None:
+    record = OGCRecord("timestamps", properties={field: timestamp})
+    expected = datetime(2026, 10, 9, 0, 30, 45, tzinfo=timezone.utc)
+    assert getattr(record, field) == expected
+    assert getattr(record.record_metadata, field) == expected
+    assert record.to_dict()["properties"][field] == "2026-10-09T00:30:45Z"
+    assert record.record_metadata.to_dict()[field] == "2026-10-09T00:30:45Z"
+    assert getattr(record.clone(), field) == expected
+    assert record.properties[field] == timestamp
+
+
+def test_timestamp_assignment_and_removal() -> None:
+    record = OGCRecord("timestamps")
+    assert record.created is None
+    assert record.updated is None
+    timestamp = datetime(2026, 10, 9, 0, 30, 45, 123456, tzinfo=timezone.utc)
+    record.created = timestamp
+    record.record_metadata.updated = timestamp
+    assert record.created == record.updated == timestamp.replace(microsecond=0)
+    assert record.properties == {
+        "created": "2026-10-09T00:30:45Z",
+        "updated": "2026-10-09T00:30:45Z",
+    }
+    assert record.datetime is None
+    record.record_metadata.created = None
+    record.updated = None
+    assert record.properties == {}
+
+
+@pytest.mark.parametrize("field", ["created", "updated"])
+@pytest.mark.parametrize("timestamp", ["not-a-date", "2026-02-30T00:00:00Z"])
+def test_rejects_invalid_metadata_timestamp(field: str, timestamp: str) -> None:
+    record = OGCRecord("invalid", properties={field: timestamp})
+    with pytest.raises(ValueError):
+        getattr(record, field)
+    with pytest.raises(ValueError):
+        record.to_dict()
+
+
+@pytest.mark.parametrize("field", ["created", "updated"])
+@pytest.mark.parametrize("timestamp", [123, True, []])
+def test_rejects_invalid_metadata_timestamp_type(field: str, timestamp: object) -> None:
+    record = OGCRecord("invalid", properties={field: timestamp})
+    with pytest.raises(TypeError, match="Metadata timestamps"):
+        getattr(record, field)
+    with pytest.raises(TypeError, match="Metadata timestamps"):
+        record.to_dict()
+
+
+def test_null_metadata_timestamps_are_preserved() -> None:
+    record = OGCRecord("null", properties={"created": None, "updated": None})
+    assert record.created is None
+    assert record.updated is None
+    assert record.to_dict()["properties"] == {"created": None, "updated": None}
+
+
+def test_nested_timestamps_roundtrip_and_stac_export(tmp_path: Path) -> None:
+    timestamp = "2026-10-09T01:30:45.987654+01:00"
+    expected = "2026-10-09T00:30:45Z"
+    link = {
+        "href": "https://example.org/data",
+        "type": "application/json",
+        "created": timestamp,
+        "updated": timestamp,
+    }
+    record = OGCRecord(
+        "nested",
+        datetime=datetime(2026, 10, 9, tzinfo=timezone.utc),
+        properties={
+            "created": timestamp,
+            "contacts": [{"name": "Example", "links": [link], "logo": {**link, "rel": "icon"}}],
+        },
+    )
+    record.add_link(pystac.Link.from_dict({**link, "rel": "related"}))
+    record.add_asset("data", pystac.Asset(link["href"], extra_fields={"updated": timestamp}))
+    original_properties = deepcopy(record.properties)
+    documents = [
+        record.to_record_dict(),
+        record.clone().to_dict(),
+        record.to_stac_item().to_dict(),
+    ]
+    path = tmp_path / "timestamps.json"
+    record.save_object(dest_href=str(path))
+    documents.append(json.loads(path.read_text()))
+    for document in documents:
+        assert document["properties"]["created"] == expected
+        contact = document["properties"]["contacts"][0]
+        assert contact["links"][0]["created"] == expected
+        assert contact["links"][0]["updated"] == expected
+        assert contact["logo"]["created"] == expected
+        assert contact["logo"]["updated"] == expected
+        related_link = next(link for link in document["links"] if link["rel"] == "related")
+        assert related_link["created"] == expected
+        assert related_link["updated"] == expected
+        assert document["assets"]["data"]["updated"] == expected
+        json.dumps(document)
+    assert record.properties == original_properties
+    original_link = record.get_single_link("related")
+    assert original_link is not None
+    assert original_link.extra_fields["created"] == timestamp
+    assert record.assets["data"].extra_fields["updated"] == timestamp
+    restored = OGCRecord.from_file(str(path))
+    assert restored.created == record.created
+
+
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        datetime.fromisoformat("2026-10-09T02:30:45.123456+02:00"),
+        datetime.fromisoformat("2026-10-08T19:30:45.987654-05:00"),
+        datetime(2026, 10, 9, 0, 30, 45, 123456),
+    ],
+)
+def test_stac_constructor_timestamps_normalize(timestamp: datetime) -> None:
+    fields = ("datetime", "start_datetime", "end_datetime")
+    record = OGCRecord(
+        "temporal",
+        datetime=timestamp,
+        start_datetime=timestamp,
+        end_datetime=timestamp,
+        properties=dict.fromkeys(fields, "invalid-overridden-value"),
+    )
+    expected = dict.fromkeys(fields, "2026-10-09T00:30:45Z")
+    assert record.datetime == datetime(2026, 10, 9, 0, 30, 45, tzinfo=timezone.utc)
+    assert record.properties == expected
+    assert record.to_dict()["properties"] == expected
+    assert record.to_stac_item().to_dict()["properties"] == expected
+    assert record.clone().properties == expected
+
+
+@pytest.mark.parametrize("field", ["datetime", "start_datetime", "end_datetime"])
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        "2026-10-09T02:30:45.123456+02:00",
+        datetime(2026, 10, 9, 0, 30, 45, 123456),
+    ],
+)
+def test_stac_timestamp_property_fallback(field: str, timestamp: str | datetime) -> None:
+    properties = {field: timestamp}
+    document = {"id": "temporal", "type": "Feature", "geometry": None, "properties": properties}
+    record = OGCRecord.from_dict(document)
+    assert record.properties[field] == "2026-10-09T00:30:45Z"
+    assert record.to_dict()["properties"][field] == "2026-10-09T00:30:45Z"
+    assert properties == {field: timestamp}
+
+
+@pytest.mark.parametrize("field", ["datetime", "start_datetime", "end_datetime"])
+@pytest.mark.parametrize("timestamp", ["not-a-date", "2026-02-30T00:00:00Z"])
+def test_rejects_invalid_stac_timestamp_string(field: str, timestamp: str) -> None:
+    with pytest.raises(ValueError):
+        OGCRecord("invalid", properties={field: timestamp})
+    record = OGCRecord("invalid")
+    record.properties[field] = timestamp
+    with pytest.raises(ValueError):
+        record.to_dict()
+
+
+@pytest.mark.parametrize("field", ["datetime", "start_datetime", "end_datetime"])
+@pytest.mark.parametrize("timestamp", [123, True, []])
+def test_rejects_invalid_stac_timestamp_type(field: str, timestamp: object) -> None:
+    with pytest.raises(TypeError, match="Metadata timestamps"):
+        OGCRecord("invalid", properties={field: timestamp})
+
+
+def test_temporal_mutations_normalize_without_mutating_source(tmp_path: Path) -> None:
+    timestamp = datetime.fromisoformat("2026-10-09T02:30:45.123456+02:00")
+    record = OGCRecord("temporal")
+    record.datetime = timestamp
+    record.properties["start_datetime"] = timestamp.isoformat()
+    record.properties["end_datetime"] = timestamp
+    original_properties = deepcopy(record.properties)
+    path = tmp_path / "temporal.json"
+    record.save_object(dest_href=str(path))
+    expected = dict.fromkeys(("datetime", "start_datetime", "end_datetime"), "2026-10-09T00:30:45Z")
+    assert json.loads(path.read_text())["properties"] == expected
+    assert record.to_stac_item().to_dict()["properties"] == expected
+    assert record.properties == original_properties
+    assert record.datetime == timestamp
+    assert record.datetime.microsecond == timestamp.microsecond
+
+
+def test_interval_only_export_and_null_temporal_properties() -> None:
+    timestamp = "2026-10-09T02:30:45.123456+02:00"
+    ogc_time = {"interval": ["2026-10-09", ".."]}
+    record = OGCRecord(
+        "interval",
+        properties={"datetime": None, "start_datetime": timestamp, "end_datetime": timestamp},
+        time=ogc_time,
+    )
+    expected = {
+        "datetime": None,
+        "start_datetime": "2026-10-09T00:30:45Z",
+        "end_datetime": "2026-10-09T00:30:45Z",
+    }
+    assert record.datetime is None
+    assert record.to_dict()["properties"] == expected
+    assert record.to_stac_item().to_dict()["properties"] == expected
+    assert record.time == ogc_time
+    null_properties = dict.fromkeys(("datetime", "start_datetime", "end_datetime"))
+    assert OGCRecord("null", properties=null_properties).to_dict()["properties"] == null_properties

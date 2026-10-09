@@ -17,17 +17,68 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from datetime import datetime as Datetime
+from datetime import timezone
 from typing import TYPE_CHECKING, Any, Generic, Literal, TypeAlias, TypedDict, TypeVar
 
 from pystac.utils import datetime_to_str, str_to_datetime
 
 import pystac
 
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
 T = TypeVar("T")
 
 
-if TYPE_CHECKING:
-    from datetime import datetime as Datetime
+def _metadata_datetime(value: object) -> Datetime:
+    """Normalize a timestamp to UTC whole seconds, treating naive dates as UTC.
+
+    Raises:
+        TypeError: If the value is neither a datetime nor a string.
+        ValueError: If a string cannot be parsed as an ISO 8601 timestamp.
+    """
+    if isinstance(value, str):
+        value = str_to_datetime(value)
+    if not isinstance(value, Datetime):
+        raise TypeError("Metadata timestamps must be datetime instances or ISO 8601 strings")
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc).replace(microsecond=0)
+
+
+def _normalize_temporal_properties(properties: MutableMapping[str, object]) -> None:
+    """Normalize STAC temporal properties in place, preserving absent/null values.
+
+    Raises:
+        ValueError: If a timestamp string cannot be parsed as ISO 8601.
+        TypeError: If a non-null timestamp is neither a datetime nor a string.
+    """
+    for field_name in ("datetime", "start_datetime", "end_datetime"):
+        value = properties.get(field_name)
+        if value is not None:
+            properties[field_name] = datetime_to_str(_metadata_datetime(value), timespec="seconds")
+
+
+def _normalize_metadata_timestamps(value: object) -> None:
+    """Normalize created/updated fields in a copied JSON document in place.
+
+    Nested links, contacts, assets, and extension metadata use the same UTC
+    whole-second representation. Null timestamps remain null.
+
+    Raises:
+        TypeError: If a non-null timestamp is neither a datetime nor a string.
+        ValueError: If a timestamp string cannot be parsed as ISO 8601.
+    """
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key in ("created", "updated") and child is not None:
+                value[key] = datetime_to_str(_metadata_datetime(child), timespec="seconds")
+            else:
+                _normalize_metadata_timestamps(child)
+    elif isinstance(value, list):
+        for child in value:
+            _normalize_metadata_timestamps(child)
 
 
 class _RequiredLanguage(TypedDict):
@@ -234,14 +285,61 @@ class MetadataField(Generic[T]):
 
 
 class RecordMetadataMixin:
-    """Direct recordCommonProperties accessors; dates use their JSON string form.
+    """Record metadata accessors with datetime values for creation and update times.
 
     Nested structures remain open dictionaries, allowing future extensions.
     These accessors do not perform JSON Schema validation.
     """
 
-    created = MetadataField[str]("created")
-    updated = MetadataField[str]("updated")
+    # PySTAC properties are an open JSON metadata boundary.
+    properties: dict[str, Any]
+
+    @property
+    def created(self) -> Datetime | None:
+        """The created timestamp in UTC whole seconds, or None if absent.
+
+        Assign a datetime to store its ISO 8601 string, or None to remove it.
+        Naive datetimes are treated as UTC; fractional seconds are truncated.
+
+        Raises:
+            ValueError: If the stored timestamp string is invalid.
+            TypeError: If the stored value is neither a datetime nor a string.
+        """
+        value = self.properties.get("created")
+        return None if value is None else _metadata_datetime(value)
+
+    @created.setter
+    def created(self, value: Datetime | None) -> None:
+        if value is None:
+            self.properties.pop("created", None)
+        else:
+            self.properties["created"] = datetime_to_str(
+                _metadata_datetime(value), timespec="seconds"
+            )
+
+    @property
+    def updated(self) -> Datetime | None:
+        """The updated timestamp in UTC whole seconds, or None if absent.
+
+        Assign a datetime to store its ISO 8601 string, or None to remove it.
+        Naive datetimes are treated as UTC; fractional seconds are truncated.
+
+        Raises:
+            ValueError: If the stored timestamp string is invalid.
+            TypeError: If the stored value is neither a datetime nor a string.
+        """
+        value = self.properties.get("updated")
+        return None if value is None else _metadata_datetime(value)
+
+    @updated.setter
+    def updated(self, value: Datetime | None) -> None:
+        if value is None:
+            self.properties.pop("updated", None)
+        else:
+            self.properties["updated"] = datetime_to_str(
+                _metadata_datetime(value), timespec="seconds"
+            )
+
     type = MetadataField[str]("type")
     title = MetadataField[str]("title")
     description = MetadataField[str]("description")
@@ -265,10 +363,19 @@ class RecordCommonProperties(RecordMetadataMixin):
 
     @property
     def properties(self) -> dict[str, Any]:
+        """The live metadata dictionary shared with the record."""
         return self.record.properties
 
+    @properties.setter
+    def properties(self, value: dict[str, Any]) -> None:
+        self.record.properties = value
+
     def to_dict(self) -> dict[str, Any]:
-        return deepcopy(self.properties)
+        """Copy properties with metadata and STAC timestamps normalized for JSON."""
+        properties = deepcopy(self.properties)
+        _normalize_temporal_properties(properties)
+        _normalize_metadata_timestamps(properties)
+        return properties
 
 
 class OGCRecord(RecordMetadataMixin, pystac.Item):
@@ -320,10 +427,13 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
 
         OGC ``time`` is independent of the STAC datetime arguments. Optional
         OGC fields override matching entries in ``extra_fields`` when supplied.
+        STAC timestamps from arguments or properties are normalized to UTC whole
+        seconds; naive datetimes are treated as UTC and fractions are truncated.
 
         Raises:
-            TypeError: If the identifier is not a string or integer.
-            ValueError: If extra fields override managed record fields.
+            TypeError: If the identifier or a STAC timestamp has an invalid type.
+            ValueError: If extra fields override managed record fields or a STAC
+                timestamp string is invalid.
         """
         if isinstance(id, bool) or not isinstance(id, (str, int)):
             raise TypeError("Record id must be a string or integer")
@@ -372,15 +482,20 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
         start: Datetime | None,
         end: Datetime | None,
     ) -> None:
-        """Apply explicit STAC dates, retaining dates already in properties."""
-        self.datetime = instant
-        if instant is not None:
-            self.properties["datetime"] = datetime_to_str(instant)
-        elif self.properties.get("datetime") is not None:
-            self.datetime = str_to_datetime(self.properties["datetime"])
-        for field_name, value in (("start_datetime", start), ("end_datetime", end)):
+        """Apply explicit STAC dates and normalize property fallbacks to UTC seconds.
+
+        Non-null constructor arguments override the corresponding properties.
+        """
+        for field_name, value in (
+            ("datetime", instant),
+            ("start_datetime", start),
+            ("end_datetime", end),
+        ):
             if value is not None:
-                self.properties[field_name] = datetime_to_str(value)
+                self.properties[field_name] = value
+        _normalize_temporal_properties(self.properties)
+        stored_instant = self.properties.get("datetime")
+        self.datetime = None if stored_instant is None else _metadata_datetime(stored_instant)
 
     @property
     def record_id(self) -> str | int:
@@ -437,9 +552,18 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
     def to_dict(
         self, include_self_link: bool = True, transform_hrefs: bool = True
     ) -> dict[str, Any]:
+        """Serialize a record with metadata and STAC timestamps in UTC whole seconds.
+
+        Normalization includes nested metadata and does not mutate the record.
+
+        Raises:
+            ValueError: If a metadata or STAC timestamp string is invalid.
+            TypeError: If a non-null timestamp is neither a datetime nor a string.
+        """
         props = deepcopy(self.properties)
         if self.datetime is not None:
-            props["datetime"] = datetime_to_str(self.datetime)
+            props["datetime"] = self.datetime
+        _normalize_temporal_properties(props)
         doc = deepcopy(self.extra_fields)
         doc.update(
             type="Feature",
@@ -447,7 +571,7 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
             geometry=deepcopy(self.geometry),
             properties=None if self._null_properties and not props else props,
             links=[
-                link.to_dict(transform_href=transform_hrefs)
+                deepcopy(link.to_dict(transform_href=transform_hrefs))
                 for link in self.links
                 if include_self_link or link.rel != pystac.RelType.SELF
             ],
@@ -462,6 +586,7 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
             doc["assets"] = {key: deepcopy(asset.to_dict()) for key, asset in self.assets.items()}
         if self.collection_id is not None:
             doc["collection"] = self.collection_id
+        _normalize_metadata_timestamps(doc)
         return doc
 
     def to_record_dict(
@@ -519,13 +644,16 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
         doc["links"] = []
         result = type(self).from_dict(doc)
         for link in self.links:
-            result.add_link(link.clone())
+            cloned_link = link.clone()
+            cloned_link.extra_fields = deepcopy(link.extra_fields)
+            result.add_link(cloned_link)
         result._stac_io = self._stac_io
         return result
 
     def to_stac_item(self) -> pystac.Item:
         """Explicit export; requires a genuine STAC temporal extent.
 
+        Metadata and STAC timestamps are normalized to UTC whole seconds.
         Constructing an Item does not replace full STAC schema validation.
         """
         if self.datetime is None and not all(
@@ -538,7 +666,7 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
             id=self.id,
             geometry=deepcopy(self.geometry),
             bbox=deepcopy(self.bbox),
-            datetime=self.datetime,
+            datetime=None if self.datetime is None else _metadata_datetime(self.datetime),
             properties=deepcopy(self.properties),
             stac_extensions=list(self.stac_extensions),
             collection=self.collection_id,
@@ -546,7 +674,16 @@ class OGCRecord(RecordMetadataMixin, pystac.Item):
             assets={k: v.clone() for k, v in self.assets.items()},
         )
         for link in self.links:
-            item.add_link(link.clone())
+            cloned_link = link.clone()
+            cloned_link.extra_fields = deepcopy(link.extra_fields)
+            item.add_link(cloned_link)
+        _normalize_temporal_properties(item.properties)
+        _normalize_metadata_timestamps(item.properties)
+        _normalize_metadata_timestamps(item.extra_fields)
+        for asset in item.assets.values():
+            _normalize_metadata_timestamps(asset.extra_fields)
+        for link in item.links:
+            _normalize_metadata_timestamps(link.extra_fields)
         return item
 
     def validate(self, validator: Any = None) -> list[Any]:

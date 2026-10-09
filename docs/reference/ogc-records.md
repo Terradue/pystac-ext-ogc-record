@@ -44,7 +44,7 @@ Both the record and `record.record_metadata` expose these live properties:
 
 | Python name | JSON property | Value |
 | --- | --- | --- |
-| `created`, `updated` | Same name | Timestamp string, with no automatic datetime conversion. |
+| `created`, `updated` | Same name | `datetime` accessors; serialized as UTC `YYYY-MM-DDTHH:mm:ssZ`. |
 | `type`, `title`, `description` | Same name | Resource classification and descriptive strings. |
 | `keywords` | `keywords` | List of strings. |
 | `themes` | `themes` | Theme dictionaries with `scheme` and `concepts`. |
@@ -66,3 +66,7 @@ Absent accessors return `None`; setting `None` deletes a property. Nested dictio
 `to_stac_item()` requires an explicit STAC temporal extent and returns a separate Item. Links and assets are cloned. Validate that Item separately for STAC compliance. Some inherited PySTAC methods assume STAC temporal metadata; test the methods your application uses on timeless records.
 
 See the [workflow/experiment guide](../how-to/ogc-records.md) for creation and serialization examples and the [OGC Records overview](https://ogcapi.ogc.org/records/) for the wider standard.
+
+Metadata timestamps treat naive datetimes as UTC, convert timezone offsets to UTC, and truncate fractional seconds. Assign `None` to remove a record timestamp. Contact-link dictionaries remain compatible with string timestamps; serialization normalizes all nested `created` and `updated` values without modifying the source dictionaries. Invalid timestamp strings raise `ValueError`.
+
+The STAC `datetime`, `start_datetime`, and `end_datetime` constructor arguments and corresponding properties use the same UTC whole-second normalization. Non-null constructor arguments override matching properties. Invalid timestamp strings raise `ValueError`, and unsupported timestamp types raise `TypeError`. Serialization and STAC export also normalize subsequent edits without mutating the record. Missing/null values are preserved; OGC `time` is independent and is not normalized.

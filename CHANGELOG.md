@@ -37,11 +37,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [1.1.0] - 2026-10-09
+
+### Fixed
+
+- temporal properties to _ISO 8601_ format with pattern `YYYY-MM-DDTHH:mm:ssZ`.
+
 ## [1.0.0] - 2026-10-09
 
 ### Added
 
 - Initial project release.
 
-[Unreleased]: https://github.com/Terradue/pystac-ext-ogc-record/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/Terradue/pystac-ext-ogc-record/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/Terradue/pystac-ext-ogc-record/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/Terradue/pystac-ext-ogc-record/releases/tag/1.0.0
