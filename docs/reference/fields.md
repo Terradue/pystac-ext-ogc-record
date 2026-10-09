@@ -22,7 +22,7 @@ limitations under the License.
 | --- | --- | --- |
 | `type` | `type` | Resource classification; separate from the top-level Feature type. |
 | `title`, `description` | Same name | Human-readable resource metadata. |
-| `created`, `updated` | Same name | Metadata timestamp strings. |
+| `created`, `updated` | Same name | `datetime` accessors; serialized as UTC `YYYY-MM-DDTHH:mm:ssZ`. |
 | `keywords` | `keywords` | Discovery terms. |
 | `language`, `languages` | Same name | Metadata language dictionaries. |
 | `resource_languages` | `resourceLanguages` | Resource language dictionaries. |
@@ -35,3 +35,5 @@ limitations under the License.
 Absent common metadata returns `None`. Assigning `None` removes a property. Accessors do not validate nested schema constraints.
 
 Top-level members such as `time`, `conformsTo`, and `linkTemplates` have separate behavior documented in the [OGC Record reference](ogc-records.md).
+
+Metadata timestamps treat naive datetimes as UTC, convert timezone offsets to UTC, and truncate fractional seconds. Assign `None` to remove a record timestamp. Contact-link dictionaries remain compatible with string timestamps; serialization normalizes all nested `created` and `updated` values without modifying the source dictionaries. Invalid timestamp strings raise `ValueError`.

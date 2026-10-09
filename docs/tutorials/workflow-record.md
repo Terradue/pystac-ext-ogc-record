@@ -25,7 +25,6 @@ from datetime import datetime, timezone
 
 import pystac
 from pystac.extensions.ogc_record import OGCRecord
-from pystac.utils import datetime_to_str
 
 workflow = OGCRecord(id="crop-mapping-workflow")
 workflow.type = "workflow"
@@ -34,7 +33,7 @@ workflow.description = "A reproducible workflow for mapping cropland."
 workflow.license = "proprietary"
 workflow.keywords = ["cropland", "classification"]
 workflow.formats = [{"name": "openEO process graph"}]
-workflow.created = workflow.updated = datetime_to_str(datetime.now(timezone.utc))
+workflow.created = workflow.updated = datetime.now(timezone.utc)
 workflow.add_link(pystac.Link(
     rel="related", target="https://example.org/projects/crop-mapping",
     media_type="application/json", title="Project: Crop mapping",
