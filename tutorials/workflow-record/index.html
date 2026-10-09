@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://terradue.github.io/pystac-ext-ogc-record/tutorials/workflow-record/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Create a workflow record - OGC Records PySTAC extension</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Create a workflow record";
+        var mkdocs_page_input_path = "tutorials/workflow-record.md";
+        var mkdocs_page_url = "/pystac-ext-ogc-record/tutorials/workflow-record/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> OGC Records PySTAC extension
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../first-steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Create a workflow record</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#create-and-connect-the-record">Create and connect the record</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#round-trip-and-copy">Round-trip and copy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#write-a-file">Write a file</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install/">Install</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-extension/">Work with record metadata</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ogc-records/">Workflow and experiment records</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/fields/">Record fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ogc-records/">OGC Records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/api/">Python API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Architecture</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">OGC Records PySTAC extension</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Tutorials</li>
+      <li class="breadcrumb-item active">Create a workflow record</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Terradue/pystac-ext-ogc-record/edit/main/docs/tutorials/workflow-record.md">Edit on pystac-ext-ogc-record</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <!--
+Copyright 2026 Terradue
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h1 id="create-a-workflow-record">Create a workflow record<a class="headerlink" href="#create-a-workflow-record" title="Permanent link">&para;</a></h1>
+<p><a href="../../how-to/install/">Install the package</a>, then run these blocks in order. The example uses application-specific workflow metadata and requires no catalog service.</p>
+<h2 id="create-and-connect-the-record">Create and connect the record<a class="headerlink" href="#create-and-connect-the-record" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pystac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pystac.extensions.ogc_record</span><span class="w"> </span><span class="kn">import</span> <span class="n">OGCRecord</span>
+
+<span class="n">workflow</span> <span class="o">=</span> <span class="n">OGCRecord</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">"crop-mapping-workflow"</span><span class="p">)</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">"workflow"</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">"Crop mapping workflow"</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">"A reproducible workflow for mapping cropland."</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">license</span> <span class="o">=</span> <span class="s2">"proprietary"</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"cropland"</span><span class="p">,</span> <span class="s2">"classification"</span><span class="p">]</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">formats</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"openEO process graph"</span><span class="p">}]</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">created</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">updated</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">add_link</span><span class="p">(</span><span class="n">pystac</span><span class="o">.</span><span class="n">Link</span><span class="p">(</span>
+    <span class="n">rel</span><span class="o">=</span><span class="s2">"related"</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"https://example.org/projects/crop-mapping"</span><span class="p">,</span>
+    <span class="n">media_type</span><span class="o">=</span><span class="s2">"application/json"</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Project: Crop mapping"</span><span class="p">,</span>
+<span class="p">))</span>
+</code></pre></div>
+<p>The adapter supplies the Feature envelope and null geometry. Common properties use named accessors; <code>pystac.Link</code> handles link serialization. The <code>created</code> and <code>updated</code> metadata timestamps do not supply a STAC Item <code>datetime</code>.</p>
+<h2 id="round-trip-and-copy">Round-trip and copy<a class="headerlink" href="#round-trip-and-copy" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="n">document</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">to_record_dict</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">document</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Feature"</span>
+<span class="k">assert</span> <span class="n">document</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="k">assert</span> <span class="n">document</span><span class="p">[</span><span class="s2">"properties"</span><span class="p">][</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"workflow"</span>
+<span class="k">assert</span> <span class="s2">"stac_version"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">document</span>
+
+<span class="n">restored</span> <span class="o">=</span> <span class="n">OGCRecord</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">document</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">restored</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="n">workflow</span><span class="o">.</span><span class="n">title</span>
+<span class="k">assert</span> <span class="n">restored</span><span class="o">.</span><span class="n">to_record_dict</span><span class="p">()</span> <span class="o">==</span> <span class="n">document</span>
+
+<span class="n">working_copy</span> <span class="o">=</span> <span class="n">restored</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+<span class="n">working_copy</span><span class="o">.</span><span class="n">keywords</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">assert</span> <span class="s2">"keywords"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">working_copy</span><span class="o">.</span><span class="n">properties</span>
+<span class="k">assert</span> <span class="n">restored</span><span class="o">.</span><span class="n">keywords</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"cropland"</span><span class="p">,</span> <span class="s2">"classification"</span><span class="p">]</span>
+</code></pre></div>
+<h2 id="write-a-file">Write a file<a class="headerlink" href="#write-a-file" title="Permanent link">&para;</a></h2>
+<p>This block writes <code>workflow_record.json</code> in the current directory, replacing it if it already exists:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"workflow_record.json"</span><span class="p">)</span>
+<span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">to_record_dict</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">loaded</span> <span class="o">=</span> <span class="n">OGCRecord</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">output_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)))</span>
+<span class="k">assert</span> <span class="n">loaded</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="n">workflow</span><span class="o">.</span><span class="n">title</span>
+</code></pre></div>
+<p>Creating and serializing the object does not establish schema conformance. <code>workflow.validate()</code> requires an explicit OGC validator. If the resource has spatial or temporal coverage, supply <code>geometry</code>, <code>bbox</code>, or OGC <code>time</code> explicitly. Continue with the <a href="../../reference/ogc-records/">OGC Record reference</a> and <a href="../../how-to/ogc-records/">workflow/experiment guide</a>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../first-steps/" class="btn btn-neutral float-left" title="First steps"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../how-to/" class="btn btn-neutral float-right" title="Overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Terradue/pystac-ext-ogc-record" class="fa fa-code-fork" style="color: #fcfcfc"> pystac-ext-ogc-record</a>
+        </span>
+    
+    
+      <span><a href="../first-steps/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../how-to/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

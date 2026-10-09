@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://terradue.github.io/pystac-ext-ogc-record/reference/ogc-records/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>OGC Records - OGC Records PySTAC extension</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "OGC Records";
+        var mkdocs_page_input_path = "reference/ogc-records.md";
+        var mkdocs_page_url = "/pystac-ext-ogc-record/reference/ogc-records/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> OGC Records PySTAC extension
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/first-steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/workflow-record/">Create a workflow record</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/install/">Install</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/use-extension/">Work with record metadata</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/ogc-records/">Workflow and experiment records</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../fields/">Record fields</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">OGC Records</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#document-structure">Document structure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-metadata-accessors">Common metadata accessors</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compatibility-and-validation">Compatibility and validation</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../api/">Python API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Architecture</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">OGC Records PySTAC extension</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">OGC Records</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Terradue/pystac-ext-ogc-record/edit/main/docs/reference/ogc-records.md">Edit on pystac-ext-ogc-record</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <!--
+Copyright 2026 Terradue
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h1 id="ogc-record-reference">OGC Record reference<a class="headerlink" href="#ogc-record-reference" title="Permanent link">&para;</a></h1>
+<p><a href="https://docs.ogc.org/is/20-004r1/20-004r1.html">OGC API — Records Part 1: Core 1.0</a> defines discovery metadata and catalog access. A record describes a resource; the JSON encoding is a GeoJSON Feature. <code>OGCRecord</code> implements an in-memory adapter for that document shape, reusing PySTAC facilities. It does not implement service endpoints or search.</p>
+<h2 id="document-structure">Document structure<a class="headerlink" href="#document-structure" title="Permanent link">&para;</a></h2>
+<p>The adapter's schema reference is <a href="https://schemas.opengis.net/ogcapi/records/part1/1.0/openapi/schemas/recordGeoJSON.yaml">recordGeoJSON.yaml</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Adapter behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>String or integer, excluding booleans. <code>record_id</code> preserves an input integer; PySTAC <code>id</code> is a string. Changing <code>id</code> to a different value changes the serialized identifier.</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>Serialized as <code>Feature</code>; <code>record.type</code> instead accesses the resource type under <code>properties</code>.</td>
+</tr>
+<tr>
+<td><code>geometry</code>, <code>bbox</code></td>
+<td>Copied on construction; geometry may be <code>None</code>. No geometric validation is performed.</td>
+</tr>
+<tr>
+<td><code>properties</code></td>
+<td>Metadata dictionary. Incoming <code>null</code> remains <code>null</code> when empty; adding metadata produces an object.</td>
+</tr>
+<tr>
+<td><code>links</code></td>
+<td>PySTAC links; <code>include_self_link=False</code> omits self links on serialization.</td>
+</tr>
+<tr>
+<td><code>time</code></td>
+<td>Optional top-level OGC temporal object, separate from STAC datetime properties.</td>
+</tr>
+<tr>
+<td><code>conformsTo</code></td>
+<td><code>conforms_to</code> exposes a live list of conformance URIs, separate from STAC extension declarations.</td>
+</tr>
+<tr>
+<td><code>linkTemplates</code></td>
+<td><code>link_templates</code> exposes a live list of template dictionaries.</td>
+</tr>
+<tr>
+<td>Foreign members</td>
+<td>Preserved in <code>extra_fields</code>; managed field collisions in constructor extras raise <code>ValueError</code>. Assets, collection ID, and STAC extension declarations are serialized when present.</td>
+</tr>
+</tbody>
+</table>
+<p><code>to_dict()</code> and <code>to_record_dict()</code> return copied document metadata. New records do not automatically gain <code>stac_version</code>; a supplied foreign member is preserved. Merely creating or reading a record does not establish OGC conformance.</p>
+<p>Reading absent <code>conforms_to</code> or <code>link_templates</code> creates an empty list in <code>extra_fields</code>. These getters reject a value of the wrong container/element type with <code>TypeError</code>. They do not validate URI syntax or template contents. <code>time=None</code> writes a JSON null; remove the <code>time</code> key from <code>extra_fields</code> to omit it entirely.</p>
+<h2 id="common-metadata-accessors">Common metadata accessors<a class="headerlink" href="#common-metadata-accessors" title="Permanent link">&para;</a></h2>
+<p>Both the record and <code>record.record_metadata</code> expose these live properties:</p>
+<table>
+<thead>
+<tr>
+<th>Python name</th>
+<th>JSON property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>created</code>, <code>updated</code></td>
+<td>Same name</td>
+<td><code>datetime</code> accessors; serialized as UTC <code>YYYY-MM-DDTHH:mm:ssZ</code>.</td>
+</tr>
+<tr>
+<td><code>type</code>, <code>title</code>, <code>description</code></td>
+<td>Same name</td>
+<td>Resource classification and descriptive strings.</td>
+</tr>
+<tr>
+<td><code>keywords</code></td>
+<td><code>keywords</code></td>
+<td>List of strings.</td>
+</tr>
+<tr>
+<td><code>themes</code></td>
+<td><code>themes</code></td>
+<td>Theme dictionaries with <code>scheme</code> and <code>concepts</code>.</td>
+</tr>
+<tr>
+<td><code>language</code>, <code>languages</code></td>
+<td>Same name</td>
+<td>Language dictionary, or list of dictionaries.</td>
+</tr>
+<tr>
+<td><code>resource_languages</code></td>
+<td><code>resourceLanguages</code></td>
+<td>Resource language dictionaries.</td>
+</tr>
+<tr>
+<td><code>external_ids</code></td>
+<td><code>externalIds</code></td>
+<td>External identifier dictionaries.</td>
+</tr>
+<tr>
+<td><code>formats</code></td>
+<td><code>formats</code></td>
+<td>Format dictionaries.</td>
+</tr>
+<tr>
+<td><code>contacts</code></td>
+<td><code>contacts</code></td>
+<td>Contact dictionaries.</td>
+</tr>
+<tr>
+<td><code>license</code>, <code>rights</code></td>
+<td>Same name</td>
+<td>License and rights strings.</td>
+</tr>
+</tbody>
+</table>
+<p>Absent accessors return <code>None</code>; setting <code>None</code> deletes a property. Nested dictionaries remain open and are not schema-validated by the accessors. The existing nested typing helpers are static hints, not runtime validators or generated schema models.</p>
+<h2 id="compatibility-and-validation">Compatibility and validation<a class="headerlink" href="#compatibility-and-validation" title="Permanent link">&para;</a></h2>
+<p><code>matches_object_type()</code> recognizes a Feature with an identifier, geometry key, and object-or-null properties. It is a structural check and also matches some STAC Items. Use <code>OGCRecord.from_dict()</code> explicitly.</p>
+<p><code>validate()</code> requires a supplied validator with <code>validate(document)</code>, configured for the OGC OpenAPI 3.0 schemas and references. The adapter delegates validation and propagates errors; it returns its schema URI after success. It does not supply a validator or verify service-level conformance. A generic JSON Schema validator must account for OpenAPI schema semantics, including <code>nullable</code>.</p>
+<p><code>to_stac_item()</code> requires an explicit STAC temporal extent and returns a separate Item. Links and assets are cloned. Validate that Item separately for STAC compliance. Some inherited PySTAC methods assume STAC temporal metadata; test the methods your application uses on timeless records.</p>
+<p>See the <a href="../../how-to/ogc-records/">workflow/experiment guide</a> for creation and serialization examples and the <a href="https://ogcapi.ogc.org/records/">OGC Records overview</a> for the wider standard.</p>
+<p>Metadata timestamps treat naive datetimes as UTC, convert timezone offsets to UTC, and truncate fractional seconds. Assign <code>None</code> to remove a record timestamp. Contact-link dictionaries remain compatible with string timestamps; serialization normalizes all nested <code>created</code> and <code>updated</code> values without modifying the source dictionaries. Invalid timestamp strings raise <code>ValueError</code>.</p>
+<p>The STAC <code>datetime</code>, <code>start_datetime</code>, and <code>end_datetime</code> constructor arguments and corresponding properties use the same UTC whole-second normalization. Non-null constructor arguments override matching properties. Invalid timestamp strings raise <code>ValueError</code>, and unsupported timestamp types raise <code>TypeError</code>. Serialization and STAC export also normalize subsequent edits without mutating the record. Missing/null values are preserved; OGC <code>time</code> is independent and is not normalized.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../fields/" class="btn btn-neutral float-left" title="Record fields"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../api/" class="btn btn-neutral float-right" title="Python API">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Terradue/pystac-ext-ogc-record" class="fa fa-code-fork" style="color: #fcfcfc"> pystac-ext-ogc-record</a>
+        </span>
+    
+    
+      <span><a href="../fields/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../api/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

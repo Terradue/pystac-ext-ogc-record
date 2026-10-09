@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://terradue.github.io/pystac-ext-ogc-record/how-to/install/" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Install - OGC Records PySTAC extension</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Install";
+        var mkdocs_page_input_path = "how-to/install.md";
+        var mkdocs_page_url = "/pystac-ext-ogc-record/how-to/install/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> OGC Records PySTAC extension
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/first-steps/">First steps</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/workflow-record/">Create a workflow record</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to guides</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Install</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#install-the-library">Install the library</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#install-from-a-checkout">Install from a checkout</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#preview-the-documentation">Preview the documentation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#run-repository-checks">Run repository checks</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../use-extension/">Work with record metadata</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ogc-records/">Workflow and experiment records</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/fields/">Record fields</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/ogc-records/">OGC Records</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../reference/api/">Python API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture/">Architecture</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">OGC Records PySTAC extension</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How-to guides</li>
+      <li class="breadcrumb-item active">Install</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Terradue/pystac-ext-ogc-record/edit/main/docs/how-to/install.md">Edit on pystac-ext-ogc-record</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <!--
+Copyright 2026 Terradue
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h1 id="install-and-build">Install and build<a class="headerlink" href="#install-and-build" title="Permanent link">&para;</a></h1>
+<h2 id="install-the-library">Install the library<a class="headerlink" href="#install-the-library" title="Permanent link">&para;</a></h2>
+<p>The package declares Python 3.10 or later and PySTAC <code>&gt;=1,&lt;2</code>. The test matrix covers Python 3.10–3.14.</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pystac-ext-ogc-record
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"from pystac.extensions.ogc_record import OGCRecord; print(OGCRecord(id='example').to_dict())"</span>
+</code></pre></div>
+<h2 id="install-from-a-checkout">Install from a checkout<a class="headerlink" href="#install-from-a-checkout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Terradue/pystac-ext-ogc-record.git
+<span class="nb">cd</span><span class="w"> </span>pystac-ext-ogc-record
+python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</code></pre></div>
+<p>If an existing editable installation predates a packaging change, repeat the editable install in that environment.</p>
+<h2 id="preview-the-documentation">Preview the documentation<a class="headerlink" href="#preview-the-documentation" title="Permanent link">&para;</a></h2>
+<p>Install the package and documentation tools in the same environment. Use a regular install for documentation: static API discovery does not reliably find editable modules inside the shared PySTAC namespace. Reinstall after changing source code:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="w"> </span><span class="s2">"mkdocs&lt;2"</span><span class="w"> </span>mkdocs-material<span class="w"> </span><span class="s2">"mkdocstrings[python]"</span>
+mkdocs<span class="w"> </span>serve
+</code></pre></div>
+<p>Build with warnings treated as errors:</p>
+<div class="highlight"><pre><span></span><code>mkdocs<span class="w"> </span>build<span class="w"> </span>--strict
+</code></pre></div>
+<h2 id="run-repository-checks">Run repository checks<a class="headerlink" href="#run-repository-checks" title="Permanent link">&para;</a></h2>
+<p>With Hatch installed, run these commands from the checkout:</p>
+<div class="highlight"><pre><span></span><code>hatch<span class="w"> </span>run<span class="w"> </span>dev:check
+hatch<span class="w"> </span>run<span class="w"> </span>dev:typecheck
+hatch<span class="w"> </span>run<span class="w"> </span>dev:security
+hatch<span class="w"> </span>run<span class="w"> </span>test:test
+</code></pre></div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../use-extension/" class="btn btn-neutral float-right" title="Work with record metadata">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Terradue/pystac-ext-ogc-record" class="fa fa-code-fork" style="color: #fcfcfc"> pystac-ext-ogc-record</a>
+        </span>
+    
+    
+      <span><a href="../" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../use-extension/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
