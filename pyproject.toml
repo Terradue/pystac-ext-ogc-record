@@ -43,7 +43,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "pystac>=1,<2"
+  "pystac>=1.15.2,<2"
 ]
 
 # ---------------------------------------------------------------------------
